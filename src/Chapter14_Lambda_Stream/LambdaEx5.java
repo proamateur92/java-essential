@@ -4,7 +4,6 @@ import java.util.function.*;
 import java.util.*;
 
 public class LambdaEx5 {
-
 	public static void main(String[] args) {
 		Supplier<Integer> s = () -> (int)(Math.random()*100)+1;
 		Consumer<Integer> c = i -> System.out.print(i+ ",");
