@@ -32,7 +32,7 @@ public class LambdaEx1 {
 		f3.run();
 		
 		execute(f1);
-		execute( ()->System.out.println("run()"));
+		execute( ()->System.out.println("run()") );
 	}
 
 }
