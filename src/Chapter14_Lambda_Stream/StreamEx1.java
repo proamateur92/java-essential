@@ -16,7 +16,9 @@ public class StreamEx1 {
 				new Student("김자바", 3, 180)
 		);
 		
-		studentStream.sorted(Comparator.comparing(Student::getBan)
+//		studentStream.sorted(Comparator.comparing(Student::getBan)
+		studentStream.sorted(Comparator.comparing(Student::getBan).reversed()
+				.thenComparing(Comparator.comparing(Student::getName))
 				.thenComparing(Comparator.naturalOrder()))
 				.forEach(System.out::println);
 		
