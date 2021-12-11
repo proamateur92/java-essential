@@ -315,4 +315,20 @@ filter()는 매개변수로 Predicate를 필요로 하는데,
    Stream<T> sorted()
    Stream<T> sorted(Comparator<? super T> comparator)
    
-   
+4) 스트림 요소 변환하기 - map() 
+	
+	Stream<R> map(Function<> super T, > extends R> mapper) // Stream<T> -> Stream<R>
+
+	Stream<File> fileStreams = Stream.of(new File("Ex1.java"), new File("Ex1"))
+			new File("Ex1.bak"), new File("Ex2.java"), new File("Ex1.txt"));
+			
+	Stream<String> filenameStream = fileStream.map(File::getName);
+	filenameStream.forEach(System.out::println); // 스트림의 모든 파일의 이름을 출력		
+
+				map(File::getName)
+	Stream<File> 		-> 		Stream<String>
+	
+	
+5) peek()  
+
+6) 변환(스트림의 스티림) - flatmap()   
