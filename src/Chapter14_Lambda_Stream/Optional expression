@@ -1,0 +1,37 @@
+2.4 Optional 
+
+1) T 타입 객체의 래퍼 클래스 - Optional<T>
+- 간접적으로 null 다루기(NullPointException)
+- null체크	
+
+	public final class Optional<T> {
+		private final T value;	// T타입의 참조 변수. 모든 종류의 객체 저장 가능
+		
+	}	
+
+2) Optional<T>객체 생성하기
+
+	- Optional<T> 객체를 생성하는 다양한 방법
+	String str = "abc";
+	Optional<String> optVal = Optional.of(str);
+	Optional<String> optVal = Optional.of("abc");	
+	Optional<String> optVal = Optional.of(null);		 // NullPointException 발생
+	Optional<String> optVal = Optional.ofNullable(null); // OK
+	
+	- null 대신 빈 Optional<T> 객체를 사용하자
+	Optional<String> optVal = null;	// 널로 초기화. 바람직하지 않음
+	Optional<String> optVal = Optional.<String>empty();	// 빈 객체로 초기화
+	
+3) Optional<T> 객체의 값 가져오기
+	
+	- Optional 객체의 값 가져오기 - get(), orElse(), orElseGet(), orElseThrow()
+	Optional<String> optVal = Optional.of("abc");
+	String str1 = optVal.get();						// optVal에 저장된 값을 반환. null이면 예외발생.
+	String str2 = optVal.orElse();					// optVal에 저장된 값이 null일 때는, ""를 반환
+	String str3 = optVal.orElseGet(String::new);	// 람다식 사용가능 () -> new String()
+	String str4 = optVal.orElseThrow(NullPointException::new);		// 널이면 예외발생
+	
+	- isPresent() - Optional객체의 값이 null이면 false, 아니면 true를 반환
+	if(Optional.ofNullable(str).isPresent()) {	// if(str!=null)
+		System.out.println(str);
+	}
