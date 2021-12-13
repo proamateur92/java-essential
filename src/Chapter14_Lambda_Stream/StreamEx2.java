@@ -16,16 +16,15 @@ public class StreamEx2 {
 		
 		fileStream = Stream.of(fileArr);
 		
-		fileStream.map(File::getName)
+		fileStream.map(File::getName) 
 				.filter(s->s.indexOf(".")!=-1)	// 확장자 없는 이름 제거
+				.peek(s->System.out.printf("filename=%s%n",s))	// 파일 이름 출력
 				.map(s->s.substring(s.indexOf(".")+1))	// Strema<String> -> Stream<String>
+				.peek(s->System.out.printf("filename=%s%n",s)) 	// 파일 확장자 출력
 				.map(String::toUpperCase)
 				.distinct()
-				.peek(System.out::println);
-//				.forEach(System.out::println);	
+				.forEach(System.out::println);	
 
-					
-		
 	}
 
 }
