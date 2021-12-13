@@ -331,4 +331,11 @@ filter()는 매개변수로 Predicate를 필요로 하는데,
 	
 5) peek()  
 
-6) 변환(스트림의 스티림) - flatmap()   
+6) 변환(스트림의 스트림) - flatmap()   
+- 스트림의 스트림을 스티림으로 변환 - flatMap()
+	
+	Stream<String[]> strArrStrm = Stream.of(new String[]{"aaa","bbb"}, new String[]{"abc","ABC"}, new String[]{"ccc","ddd"});
+	Stream<Stream<String>> strStrStrm = strArrStrm.map(Arrays::stream);
+	
+	Stream<String> strStrStrm = strArrstrm.flatMap(Arrays::stream);	// Arrays.stream(T[])
+	
