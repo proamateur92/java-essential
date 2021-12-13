@@ -339,3 +339,140 @@ filter()는 매개변수로 Predicate를 필요로 하는데,
 	
 	Stream<String> strStrStrm = strArrstrm.flatMap(Arrays::stream);	// Arrays.stream(T[])
 	
+2.5 스트림의 최종 연산
+
+	중간연산 - n번 가능 stream 반환(limit(),skip(),filter(),distinct(),peek(),map())
+	최종연산 - 1번 가능, int, boolean, Optional 반환(forEach(), allMatch(), anyMatch(), noneMatch(), reduce(), collect(), findFirst(), findAny())
+	(스트림의 요소를 소모하여 스트림이 닫힘)
+	
+1) forEach()
+- 스트림의 모든 요소에 지정된 작업을 수행 - forEach(), forEachOrdered()
+
+	void forEach(Consumer<? super T> action) // 병렬스트림인 경우 순서가 보장되지 않음
+	void forEachOrdered(Consumer<? super T> action) // 병렬스트림인 경우에도 순서가 보장됨
+
+	<직렬>	
+	intStream.range(1, 10).sequential().forEach(System.out::print);		   // 123456789
+	intStream.range(1, 10).sequential().forEachOrdered(System.out::print); // 123456789
+
+	<병렬>
+	intStream.range(1, 10).parallel().forEach(System.out::print);		   // 섞임
+	intStream.range(1, 10).parallel().forEachOrdered(System.out::print);   // 123456789
+
+2) 조건 검사
+- allMatch(), anyMatch(), noneMatch()
+
+	boolean allMatch (Predicate<? super T> predicate) // 모든 요소가 조건을 만족시키면 true		
+	boolean anyMatch (Predicate<? super T> predicate) // 한 요소라도 조건을 만족시키면 true		
+	boolean noneMatch (Predicate<? super T> predicate) // 모든 요소가 조건을 만족시키지 않으면 true		
+	
+	boolean hasFailedStu = stuStream.anyMatch(s->s.getTotalScore()<=100); // 낙제자가 있는지
+	
+3) 조건에 일치하는 요소 찾기 - findFirst(), findAny()
+
+	Optional<T> findFirst() // 첫 번째 요소를 반환. 순차 스트림에 사용
+	Optional<T> findAny()   // 아무거나 하나를 반환. 병렬 스트림에 사용.
+	
+	Optional<Student> result = stuStream.filter(s->s.getTotalScore<=100).findFirst();	
+	Optional<Student> result = parallelStream.filter(s->s.getTotalScore<=100).findAny();	
+	
+4) 스트림의 요소를 하나씩 줄여가며 누적연산 수행 - reduce()	
+
+	Optional<T> reduce(BinaryOperator<T> accumulator)
+	T 			reduce(T identity, BinaryOperator<T> accumulator)
+	U			reduce(U identity, BinaryOperator<U,T,U> accumulator, BinaryOperator<U> combiner)
+	- identity 초기값
+	- accumulator - 이전 연산 결과와 스트림의 요소에 수행할 연산
+	- combiner - 병렬처리된 결과를 합치는데 사용할 연산
+	
+	// int reduce(int identity, IntBinaryOperator op)
+	int count = intStream.reduce(0, (a,b) -> a + 1);
+	int sum = intStream.reduce(0, (a,b) -> a + b);
+	int max = intStream.reduce(Integer.MIN_VALUE, (a,b) -> a > b ? a : b);
+	int min = intStream.reduce(Integer.MAX_VALUE, (a,b) -> a < b ? a : b);
+	
+2.6 collect() - 그룹별로 리듀싱 가능
+- collect()는 Collector를 매개변수로 하는 스트림의 최종연산
+
+	//Collector 인터페이스
+	Object collect(Collector collector) // Collector를 구현한 클래스의 객체를 매개변수로
+	Object collect(Supplier supplier, Biconsumer accmulator, BiConsumer combiner) // 잘 안쓰임
+	
+- Collector는 수집(collect)에 필요한 메서드를 정의해 놓은 인터페이스
+
+	public interface Collector<T, A, R> {			// T(요소)를 A에 누적한 후, 결과를 R로 변환하여 반환
+		Supplier<A>				supplier();				// StringBuilder::new				누적할 곳
+		BiConsumer<A, T>		accumulator();			// (sb, s) -> sb.append(s)			누적방법
+		BinaryOperator<A>		combiner();				// (sb1, sb2) -> sb1.append(sb2)	결합방법(병렬)
+		Function<A, R>		 	finisher();				// sb -> sb.toString()				최종변환
+		Set<Characteristics> 	characteristics();		// 컬렉터의 특성이 담긴 Set을 반환
+	}
+
+- Collectors클래스는 다양한 기능의 컬렉터(Collector를 구현한 클래스)를 제공
+	변환 - mapping(), toList(), toSet(), toMap(), toCollection(), ...
+	통계 - counting(), summingInt(), averagingInt(), maxBy(), minBy(), summarizingInt(), ...
+	문자열 결합 - joining()
+	리듀싱 - reducing()
+	그룹화와 분할 - groupingBy(), partitioningBy(), collectingAndThen()	
+	
+	collect(): 최종연산
+	Collector: 인터페이스
+	Collectors: Collector를 구현한 구현체를 제공하는 클래스
+	
+1) 스트림을 컬렉션으로 변환 - toList(), toSet(), toMap(), toCollection()
+
+	List<String> names = stuStream.map(Student::getName) 	// Stream<Student> -> Stream<String>
+							.collect(Collectors.toList());  // Stream<String> -> List<String>	
+							
+	ArrayList<String> list = names.stream()
+		.collect(Collectors.toCollection(Arrays::new));		// Stream<String> -> ArrayList<String>						
+		
+	Map<String, Person> map = personStream
+		.collect(Collectors.toMap(p->p.getRegId(), p->p));		// Stream<Person> -> Map<String,Person>	
+		
+2) 스트림을 배열로 변환 - toArray()
+
+	Student[] stuNames = studentStream.toArray(Student[]::new) // OK
+	-> (i) -> new Student[i]
+	Student[] stuNames = (Student)studentStream.toArray(); // 에러. 형변환 필요.
+	Object[] stuNames = studentStream.toArray();  // OK		
+	
+3) 스트림의 통계정보 제공 - counting(), summingInt(), maxBy(), minBy(), ...
+
+	long count = stuStream.count();
+	long count = stuStream.coolect(counting()); // Collectors.counting()
+	
+	long totalScore = stuStream.mapToInt(Student::getTotalScore).sum(); // IntStream의 sum()
+	long totalScore = stuStream.collect(summingInt(Student::getTotalScore));	
+	
+	OptionalInt topScore = studentStrema.mapToInt(Student::getTotalScore).max();
+	Optional<Student> topStudent = stuStream
+						.max(Comparator.coparingInt(Student::getTotalScore));
+	Optional<Student> topStudent = stuStream
+						.collect(maxBy(Comparator.comparingInt(Studnet::getTotalScore)));
+						
+4) 스트림을 리듀싱 - Collectors.reducing() 그룹별 리듀싱
+
+	Collector reducing(BinaryOperator<T> op)
+	Collector reducing(T identity, BinaryOperator<T> op)
+	Collector reducing(U identity, Function<T,U> mapper, BinaryOperator<U> op) // map+reduce
+							
+	IntStream intStream = new Random().ints(1,46).distinct().limit(6);
+	
+	OptionalInt max = intStream.reduce(Integer::max);
+	Optional<Integer> max = intStream.boxed().collect(reducing(Integer::max));
+	
+	long sum = intStream.reduce(0, (a,b) -> a + b);
+	long sum = intStream.boxed().collect(reducing(0, (a,b) -> a + b));
+	
+	int grandTotal = stuStream.map(Student::getTotalScore).reduce(0, Integer::sum);
+	int grandTotal = stuStream.collect(reducing(0, Student::getTotalScore, Integer::sum));
+	
+5) 문자열 스트림의 요소를 모두 연결 - joining()
+
+	String studentNames = stuStream.map(Student::getName).collect(joining());
+	String studentNames = stuStream.map(Student::getName).collect(joining(",")); // 구분자
+	String studentNames = stuStream.map(Student::getName).collect(joining(",","[","]"));
+	String studentNames = stuStream.collect(joining(",")); // Student의 toString()으로 결합
+
+
