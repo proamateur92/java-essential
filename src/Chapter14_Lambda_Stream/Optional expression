@@ -1,4 +1,6 @@
-2.4 Optional 
+2.4 Optional<T>와 OptionalInt 
+
+Optional<T>
 
 1) T 타입 객체의 래퍼 클래스 - Optional<T>
 - 간접적으로 null 다루기(NullPointException)
@@ -35,3 +37,33 @@
 	if(Optional.ofNullable(str).isPresent()) {	// if(str!=null)
 		System.out.println(str);
 	}
+	
+OptionalInt, OptionalLong, OptionalDouble
+1) 기본형 값을 감싸는 래퍼클래스	(성능을 위해 사용)
+	
+	public final class OptionalInt() {
+		...
+		private final boolean isPresent; // 값이 저장되어 있으면 true
+		private final int value; // int타입의 변수
+		
+		
+	}
+
+2) Optional의 값 가져오기 - int getAInt()
+	
+	Optional<T> 	->	T get()
+	OptionalInt		->	int getAsInt()
+	OptionalLong 	->	long getAsLong()
+	OptionalDouble 	->	double getAsDouble()	
+	
+3) 빈 Optional 객체와의 비교
+
+	OptionalInt opt = OptionalInt.of(0); // OptionalInt에 0을 저장
+	OptionalInt opt2 = OPtionalInt.empty(); // OptionalInt에 0을 저장
+	
+	System.out.println(opt.isPresent());  // true
+	System.out.println(opt2.isPresent()); // false
+	System.out.println(opt.equals(opt2)); // false
+	-> value값이 같고 isPresnet()값이 같아야 equals값도 같다.
+
+	
