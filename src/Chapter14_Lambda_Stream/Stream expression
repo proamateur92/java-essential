@@ -17,7 +17,7 @@
   Stream<String> strStream2 = Arrays.stream(strArr) // 스트림을 생성
   
 이 두 스트림으로 데이터 소스의 데이터를 읽어서 정렬하고 화면에 출력하는 방법은 다음과 같다.
-데이터 소스가 정렬되는 것은ㅇ ㅏ니다.
+데이터 소스가 정렬되는 것은 아니다.
 
   strStream1.sorted().forEach(System.out::println);
   strStream2.sorted().forEach(System.out::println);
@@ -475,4 +475,57 @@ filter()는 매개변수로 Predicate를 필요로 하는데,
 	String studentNames = stuStream.map(Student::getName).collect(joining(",","[","]"));
 	String studentNames = stuStream.collect(joining(",")); // Student의 toString()으로 결합
 
+2.7 스트림의 그룹화와 분할
 
+- partitioningBy()는 스트림을 2분할한다.
+
+	Collector partitioningBy(Predicate predicate)
+	Collector partitioningBy(Predicate predicate, Collector downstream)
+	
+	Map<Boolean, List<Student>> stuBySex = stuStream
+						.collect(partitioningBy(Student::isMale)); // 학생들을 성별로 분할
+	List<Student> maleStudent = stuBySex.get(true); // Map에서 남학생 목록을 얻는다.
+	List<Student> femaleStudent = stuBySex.get(false); // Map에서 남학생 목록을 얻는다.
+	
+	
+	Map<Boolean, Long> stuNumBySex = stuStream
+						.collect(partitioningBy(Student::isMale, counting())); // 분할 + 통계
+	System.out.println("남학생 수 :"+ stuNumBySex.get(true));
+	System.out.println("남학생 수 :"+ stuNumBySex.get(false));
+	
+	Map<Boolean, Optional<Student>> topScoreBySex = stuStream // 분할 + 통계
+		.collect(partitioningBy(Student::isMale), maxBy(comparingInt(Student::getScore)));
+	System.out.println("남학생 1등 :"+ topScoreBySex.get(true)); // 남학생 1등 : Optional[[나자바,남,1,1,300]];	
+	System.out.println("여학생 1등 :"+ topScoreBySex.get(false)); // 여학생 1등 : Optional[[김지미,여,1,1,250]];	
+	
+	Map<Boolean, Map<Boo;lean, List<Student>>> failedStuBySex = stuStream // 다중 분할
+		.collect(partitioningBy(Student::isMale,			// 1. 성별로 분할(남/녀)
+				 partitioningBy(s -> s.getScore() < 150));	// 2. 성적으로 분할(불합격/합격)	 
+	List<Student> failedMailStu = failedStuBySex.get(true).get(true);
+	List<Student> failedFemailStu = failedStuBySex.get(false).get(true);
+	
+	
+- groupingBy()는 스트림을 n분할한다.
+	
+	Collector groupingBy(Functiong classifier)
+	Collector groupingBy(Functiong classifier, Collector downStream)
+	Collector groupingBy(Functiong classifier, Supplier mapFactory, Collector downStream)
+	
+	Map<Integer, List<Student>> stuByBan = studStream					// 학생을 반별로 그룹화
+					.collect(groupingBy(Student::getBan, toList()));	// tiList() 생략가능	
+					
+	Map<Integer, Map<Integer, List<Student>>> stuByHakAndBan = stuStream // 다중 그룹화
+					.collect(groupingBy(Student::getHak,				 // 1. 학년별 그룹화				
+							 gruopingBy(Student::getBan)				 // 2. 반별 그룹화
+					));				
+					
+	Map<Intger, Map<Integer, Set<Student>Level>>> stuByHanAndBan = stuStream
+		.collect(
+			groupingBy(Student::getHak, groupingBy(Student::getBan,	// 다중 그룹화(학년별, 반별)
+				mapping(s-> {	//성적등급(Level)으로 변환. List<Student> -> Set<Student.Level>
+					if(s.getScore() >= 200) return Student.Level.HIGH;
+					else if(s.getScore() >= 100) return Student.Level.MID;
+					else return Student.Level.LOW;
+				} , toSet())	// mapping()		// enum Level {HIGH,MID,LOW}
+			))	// groupingBy()
+		);	// collect()				
