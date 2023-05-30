@@ -6,14 +6,14 @@ public class ParameterTest2 {
 		Data d = new Data();
 		d.x = 10;
 		
-		System.out.println("���� �� d.x��: " + d.x);
+		System.out.println("변경 전 d.x 값:  " + d.x);
 		
 		change(d);
-		System.out.println("���� �� d.x��: " + d.x);
+		System.out.println("변경 후 d.x 값:  " + d.x);
 	}
 
 	static void change(Data d) {
 		d.x = 1000;
-		System.out.println("d.x ��: " + d.x);
+		System.out.println("d.x 값: " + d.x);
 	}
 }

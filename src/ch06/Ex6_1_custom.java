@@ -7,22 +7,22 @@ class Konoha {
 	void activeShadow() {
 		
 		if(!isShadow) { 
-			System.out.println("! �ش� ����� �������� ���߽��ϴ�.");
+			System.out.println("! 해당 기술을 습득하지 못했습니다.");
 			return;
 		}
 		
 		if(chakra < 10) {
-			System.out.println("! ��ũ�� �����մϴ�.");
+			System.out.println("! 차크라가 부족합니다.");
 			return;
 		}
 		
-		System.out.println("<<�ι�. �׸��� �нż�!!>>");
+		System.out.println("<<인법. 그림자 분신술!!>>");
 		chakra-= 10; 
 	}
 	
 	void chargeChakra() {
 		chakra += 5;
-		System.out.println("��ũ�� " + (chakra - 5) +"���� " + chakra + "(��)�� ȸ���Ǿ����ϴ�.");
+		System.out.println("차크라가 " + (chakra - 5) +"에서 " + chakra + "(으)로 회복되었습니다.");
 	}
 }
 
@@ -35,12 +35,12 @@ public class Ex6_1_custom {
 		konohaSinobi1.chakra = 25;
 		konohaSinobi1.isShadow = true;
 	
-		System.out.println("�����ٸ��� ����1�� ü��: " + konohaSinobi1.health);
-		System.out.println("�����ٸ��� ����1�� ��ũ��: " + konohaSinobi1.chakra);
-		System.out.println("�����ٸ��� ����1�� �׸��ںнż� ���� ����: " + (konohaSinobi1.isShadow ? "��" : "�ƴϿ�"));
+		System.out.println("나뭇잎마을 닌자1의 체력: " + konohaSinobi1.health);
+		System.out.println("나뭇잎마을 닌자1의 차크라: " + konohaSinobi1.chakra);
+		System.out.println("나뭇잎마을 닌자1의 그림자분신술 소유 여부: " + (konohaSinobi1.isShadow ? "예" : "아니오"));
 		
 		konohaSinobi1.activeShadow();
-		System.out.println("�����ٸ��� ����1�� ��ũ�� " + konohaSinobi1.chakra);
+		System.out.println("나뭇잎마을 닌자1의 차크라 " + konohaSinobi1.chakra);
 		konohaSinobi1.chargeChakra();
 		System.out.println("======================================================");
 		
@@ -49,11 +49,11 @@ public class Ex6_1_custom {
 		konohaSinobi2.health = 5; 
 		konohaSinobi2.chakra = 15;
 	
-		System.out.println("�����ٸ��� ����2�� ü��: " + konohaSinobi2.health);
-		System.out.println("�����ٸ��� ����2�� ��ũ��: " + konohaSinobi2.chakra);
-		System.out.println("�����ٸ��� ����2�� �׸��ںнż� ���� ����: " + (konohaSinobi2.isShadow ? "��" : "�ƴϿ�"));
+		System.out.println("나뭇잎마을 닌자2의 체력: " + konohaSinobi2.health);
+		System.out.println("나뭇잎마을 닌자2의 차크라: " + konohaSinobi2.chakra);
+		System.out.println("나뭇잎마을 닌자2의 그림자분신술 소유 여부: " + (konohaSinobi2.isShadow ? "예" : "아니오"));
 		
 		konohaSinobi2.activeShadow();
-		System.out.println("�����ٸ��� ����2�� ��ũ�� " + konohaSinobi2.chakra);
+		System.out.println("나뭇잎마을 닌자2의 차크라 " + konohaSinobi2.chakra);
 	}
 }

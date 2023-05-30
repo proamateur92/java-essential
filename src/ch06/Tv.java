@@ -1,14 +1,14 @@
 package ch06;
 public class Tv {
-	// Tv�� �Ӽ� (��� ����)
-	String color;	// ����
-	int channel;	// ä��
-	boolean power;	// ���� ���� on/off
+	// Tv의 속성 (멤버 변수)
+	String color;	// 색상
+	int channel;	// 채널
+	boolean power;	// 전원 상태 on/off
 	
-	// Tv�� ��� (�޼���)
-	void power() { power = !power; } // tv ���� on/off �ϴ� ���
+	// Tv의 기능 (메서드)
+	void power() { power = !power; } // tv 전원 on/off 하는 기능
 
-	// tv ä�� �����ϴ� ���. 10�� �Ѿ�� 1�� �ʱ�ȭ
+	// tv 채널 증가하는 기능. 10을 넘어가면 1로 초기화
 	void channelUp() { 
 		if(channel > 10) {
 			channel = 1;
@@ -18,7 +18,7 @@ public class Tv {
 		channel++; 
 	}
 
-	// tv ä�� �����ϴ� ���. ä���� 1�� �̸��̸� 10���� �ʱ�ȭ
+	// tv 채널 감소하는 기능. 채널이 1을 미만이면 10으로 초기화
 	void channelDown() { 
 		if(channel == 1) {
 			channel = 10;
