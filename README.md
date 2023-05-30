@@ -206,3 +206,57 @@ t2 = t1;
 > 5. 가비지 컬렉터 (GC)는 주기적으로 메모리 낭비를 체크한다. 따라서, 일일이 개발자가 적용하지 않더라도 불필요한 객체를 삭제해준다.
 > ** GC에 대해 더 깊이 공부해보기
 
+<br>
+
+### 6-8 클래스의 다른 정의
+
+#### 1. 데이터와 함수의 결합
+
+- 변수 - 하나의 데이터를 저장할 수 있는 공간
+- 배열 - 동일한 타입에 여러 데이터를 저장할 수 있는 공간
+- 구조체 - 타입에 관계없이 서로 관련된 데이터를 저장할 수 있는 공간
+- 클래스 (구조체 + 함수) 데이터와 함수의 결합
+
+#### 2. 클래스 - 사용자 정의 타입
+- 개발자가 직접 새로운 타입을 정의할 수 있다.
+- 서로 관련된 값을 묶어 하나의 타입으로 정의한다.
+
+```
+class Time {
+	int hour;
+	int minute;
+	int second;
+}
+
+// ==========================================================
+
+int hour;
+int minute;
+int second;
+
+// int 타입 hour, minute, secound 변수를 가진 클래스의 인스턴스
+Time t = new Time();
+
+// ==========================================================
+
+int hour1, hour2, hour3;
+int minute1, minute2, minute3;
+int second1, second2, second3;
+
+// int 타입 hour, minute, secound 변수를 가진 클래스의 인스턴스 
+Time t1 = new Time();
+Time t2 = new Time();
+Time t3 = new Time();
+
+// ======================================================
+
+int[] hour = new int[3];
+int[] minute = new int[3];
+int[] second = new int[3];
+
+// int 타입 hour, minute, secound 변수를 가진 클래스의 배열 인스턴스
+Time[] t = new Time[3];
+
+t[0] = new Time();
+t[1] = new Time();
+t[2] = new Time();
