@@ -372,4 +372,271 @@ class CallStackTest {
 	- 인스턴스변수, 인스턴스메서드와 관련없는 작업을 하는 메서드
 	- 메서드 내에서 인스턴스메서드, 인스턴스 변수 사용불가
 	- 메서드 내에서 인스턴스변수를 사용하지 않으면 static붙이기
+
+### 6.11 오버로딩
+
+- 메서드 명과 리턴타입이 같을 때, 매개변수의 갯수 및 타입이 다른 경우 선언 가능
+- 대표적인 예는 print 메서드
+
+### 6.12 클래스메서드(static)와 인스턴스메서드
+
+- 인스턴스메서드
+	- 인스턴스 생성 후, 참조변수.메서드이름()으로 호출
+	- 인스턴스변수나 인스턴스메서드와 관련된 작업을 하는 메서드
+	- 메서드 내에서 인스턴스변수 사용가능
 	
+- 클래스메서드 (static메서드)
+	- 객체생성없이 클래스이름.메서드이름()으로 호출
+	- 인스턴스변수, 인스턴스메서드와 관련없는 작업을 하는 메서드
+	- 메서드 내에서 인스턴스메서드, 인스턴스 변수 사용불가
+	- 메서드 내에서 인스턴스변수를 사용하지 않으면 static붙이기
+	
+### 6.13 생성자
+
+- 인스턴스가 생성될 때마다 호출되는 인스턴스 초기화 메서드.
+- 인스턴스 변수의 초기화 또는 인스턴스 생성시 수행할 작업에 사용.
+- 몇가지 조건을 제외하면 메서드와 같다.
+- 모든 클래스에는 반드시 하나 이상의 생성자가 있어야 한다.
+
+** 인스턴스 초기화 - 인스턴스 변수에 적절한 값을 저장하는 것.
+
+```
+Card c = new Card();
+
+// 1. 연산자 new에 의해 메모리(heap)에 Card클래스의 인스턴스 생성
+// 2. 생성자 Card()가 호출되어 수행된다.
+// 3. 연산자 new의 결과로 생성된 Card 인스턴스의 주소가 반환되어 참조변수 c에 저장된다.
+```
+
+<br>
+ 
+#### 1. 생성자의 조건 
+	- 생성자의 이름은 클래스의 이름과 동일해야 한다.
+	- 생성자는 리턴값이 없다. (void는 쓰지 않는다.)
+	
+```
+class Card {
+	
+	Card() {	// 매개변수가 없는 생성자
+		// 인스턴스 초기화 작성
+	}
+	
+	Card(String kind, int number) {	// 매개변수가 있는 생성자
+		// 인스턴스 초기화 작성
+	}
+}
+```
+
+<br>
+ 
+#### 2. 기본 생성자
+	- 매개변수가 없는 생성자
+	- 클래스에 생성자가 하나도 없으면 컴파일러가 기본 생성자를 추가한다.
+	(생성자가 하나라도 있으면 컴파일러는 기본 생성자를 추가하지 않는다.)
+	- 모든 클래스에는 반드시 하나 이상의 생성자가 있어야 한다.
+
+<br>
+	
+#### 3. 생성자 this()
+	- 생성자, 같은 클래스의 다른 생성자를 호출할 때 사용.
+	- 다른 생성자 호출은 생성자의 첫 문장에서만 가능.
+	
+<br>
+	
+```
+class Candy {
+	String name;
+	int weight;
+	int sugars;
+	
+	Candy() {
+		this("basic", 5, 5);
+	}
+	
+	Candy(String n, int w, int s) {
+		name = n;
+		weight = w;
+		sugars = s;
+	}
+}
+```
+
+<br>
+
+#### 4. 참조변수 this
+
+- 인스턴스 자신을 가리키는 참조변수. 인스턴스의 주소가 저장되어 있다.
+- 모든 인스턴스 메서드에 지역변수로 숨겨진 채로 존재한다.
+
+<br>
+
+```
+class Candy {
+	String name;
+	int weight;
+	int sugars;
+	
+	Candy() {
+		this("basic", 5, 5);
+	}
+	
+	Candy(String name, int weight, int sugars) {
+		this.name = name;
+		this.weight = weight;
+		this.sugars = sugars;
+	}
+}
+```
+
+<br>
+
+#### 5. 생성자를 이용한 인스턴스 복사
+- 인스턴스간의 차이는 인스턴스변수의 값 뿐 나머지는 동일하다.
+- 생성자에서 참조변수를 매개변수로 받아 인스턴스변수들의 값을 복사한다.
+- 똑같은 속성 값을 갖는 독립적인 인스턴스가 하나 더 만들어진다.
+
+```
+class Candy {
+	String name;
+	int weight;
+	int sugars;
+	
+	Candy() {
+		this("basic", 5, 5);
+	}
+	
+	Candy(String name, int weight, int sugars) {
+		this.name = name;
+		this.weight = weight;
+		this.sugars = sugars;
+	}
+	
+	Candy(Candy c) {
+		// this(c.name, c.weight, c.sugars);
+		
+		this.name = c.name;
+		this.weight = c.weight;
+		this.sugars = c.sugars;
+	}
+}
+
+class Test {
+	public static void main(String[] args) {
+		Candy c1 = new Candy();
+		Candy c2 = new Candy(c1);
+	}
+}
+
+```
+
+### 6.14 변수의 초기화
+- 변수를 선언하고 처음으로 값을 저장하는 것.
+- 멤버변수(인스턴스변수, 클래스변수)와 배열은 각 타입의 기본값으로 자동 초기화된다.
+- 지역변수는 사용 전에 꼭 초기화 해주어야 한다.
+
+> boolean false
+>
+> char '\u0000'
+>
+> byte 0
+>
+> short 0
+>
+> int 0
+>
+> long 0L
+>
+> float 0.0f
+>
+> double 0.0d or 0.0
+>
+> 참조형 변수 null
+
+<br>
+
+```
+class InitTest {
+	int x;		// 인스턴스 변수
+	int y = x;	// 인스턴스 변수
+	
+	void method() {
+		int i;		// 지역변수
+		int j = i;	// 컴파일에러 발생. 지역변수를 초기화하지 않고 사용함.
+	}
+}
+```
+
+#### 1. 멤버변수(클래스 내에 선언된 변수)의 초기화
+
+```
+class Car {
+	int door = 4;				// 기본형 변수의 초기화
+	Engine e = new Engine();	// 참조형 변수의 초기화
+	
+	// ...
+}
+```
+
+#### 2. 생성자의 초기화
+
+```
+Car(String color, String getType, int door) {
+	this.color = color;
+	this.getType = getType;
+	this.door = door;
+}
+```
+
+#### 3. 초기화 블럭
+- 클래스 초기화 블럭: static {}
+	- 클래스변수의 복잡한 초기화에 사용되며 클래스가 로딩될 때 실행된다.
+	
+- 인스턴스 초기화 블럭: {}
+	- 생성자에서 공통적으로 수행되는 작업에 사용되며 인스턴스가 생성될 때 마다 (생성자보다 먼저) 실행된다.
+	
+<br>
+
+```
+class InitBlock {
+	static { /* 클래스 초기화 블럭 */ }
+	
+	{ /* 인스턴스 초기화 블럭 */ }
+	
+	// ...
+}
+```
+
+<br>
+
+#### 4. 멤버변수의 초기화 시기와 순서
+	- 클래스변수 초기화 시점: 클래스가 처음 로딩될 때 단 한번
+	- 인스턴스변수 초기화 시점: 인스턴스가 생성될 때 마다
+
+```
+class InitTest {
+	// 초기화 순서
+	// cv = 0
+	// cv = 1
+	// cv = 2, iv = 0
+	// cv = 2, iv = 1
+	// cv = 2, iv = 2
+	// cv = 2, iv = 3
+
+	static int cv = 1;	// 명시적 초기화
+	int iv = 1;			// 명시적 초기화
+	
+	static {
+		cv = 2;	// 클래스 초기화 블럭
+	}
+	
+	{
+		iv = 2;	// 인스턴스 초기화 블럭
+	}
+	
+	InitTest() {	// 생성자
+		iv = 3;
+	}
+}
+```
+
+<br>
