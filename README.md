@@ -1176,3 +1176,92 @@ abstract class AbstractTest {	// 추상 클래스
 	- 접근제어자가 private인 메서드는 오버라이딩될 수 없다. 
 	- 접근제어자 둘 중 하나만 사용해도 의미가 충분하다.
 
+### 11. 다형성
+
+- 여러 가지 형태를 가질 수 있는 능력
+- 하나의 참조변수로 여러 타입의 객체를 잠조할 수 있는 것
+- 조상타입의 참조변수로 자손타입의 객체를 다룰 수 있는 것
+
+<br>
+
+```
+class Tv {
+	boolean power;
+	int channel;
+	
+	void power() { power = !power; }
+	void channelUp() { ++channel; }
+	void channelDown() { --channel; }
+}
+
+class CaptionTv extends Tv {
+	String text;
+	void caption() {}
+}
+```
+
+<br>
+
+> CaptionTv c = new CaptionTv();	(O)
+> Tv t = new CaptionTv();			(O)
+> CaptionTv t = new Tv();			(X)
+
+<br>
+
+> ※ 클래스의 객체를 참조하기 위한 참조변수 선언
+> 참조변수 선언시 클래스의 범위가 객체를 할당해주는 클래스의 범위와 같거나 작다.
+>
+> = 조상타입의 참조변수로 자손타입의 인스턴스를 참조할 수 있지만
+> 반대로 자손타입의 참조변수로 조상타입의 인스턴스를 참조할 수 없다.
+ 
+<br>
+
+#### 1. 참조변수의 형변환
+
+- 서로 상속관계에 있는 타입간의 형변환만 가능하다.
+- 자손 타입에서 조상타입으로 형변환하는 경우, 형변환 생략가능
+
+> 자손타입 -> 조상타입 (Up-casting)   : 형변환 생략가능
+> 자손타입 <- 조상타입 (Down-casting) : 형변환 생략불가 (해금 개념)
+
+<br>
+
+```
+class Car {
+	String color;
+	int door;
+	
+	void drive() {
+		System.out.println("drive, Brrrrrr~");
+	}
+	
+	void stop() {
+		System.out.println("stop!!");
+	}
+}
+
+class FireEngine extends Car {
+	void water() {
+		System.out.println("water!!!!");
+	}
+}
+
+class Ambulance extends Car {
+	void siren() {
+		System.out.println("siren~~~~");
+	}
+}
+```
+
+<br>
+
+
+```
+FireEngine f;
+Ambulance a;
+
+a = (Ambulance)f;
+f = (FireEngine)a;
+```
+
+<br>
