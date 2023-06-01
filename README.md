@@ -1,6 +1,13 @@
 # 자바의 정석 내용 정리
 
-## 1장
+## Index
+
+1. 자바
+6. 객체지향언어 (클래스와 객체)
+7. 상속
+8. 오버라이딩
+
+### 1. 자바
 
 ### 1-1. 자바란?
 
@@ -640,3 +647,345 @@ class InitTest {
 ```
 
 <br>
+
+### 7. 상속
+
+- 기존의 클래스를 재사용해서 새로운 클래스를 작성하는 것.
+- 두 클래스를 조상과 자손으로 관계를 맺어주는 것.
+- 자손은 조상의 모든 멤버를 상속받는다. (생성자, 초기화블럭 제외)
+- 자손의 멤버개수는 조상보다 적을 수 없다. (같거나 많음)
+
+<br>
+
+```
+class Point {
+	int x;
+	int y;
+}
+
+class Point3D extends Point {
+	int z;
+}
+```
+
+#### 1. 클래스간의 관계 - 상속관계
+- 공통부분은 조상에서 관리하고 개별부분은 자손에서 관리한다.
+- 조상의 변경은 바손에 영향을 미치지만, 자손의 변경은 조상에 아무런 영향을 미치지 않는다.
+
+#### 2. 클래스간의 관계 - 포함관계
+
+> 포함
+> - 한 클래스의 멤버변수로 다른 클래스를 선언하는 것
+> - 작은 단위의 클래스를 먼저 만들고, 이를 조합해서 하나의 커다란 클래스를 만든다.
+
+<br>
+
+```
+class Circle {
+	int x;	// 원점의 x좌표
+	int y;	// 원점의 y좌표
+	int z;	// 반지름
+}
+```
+
+```
+// 포함관계
+class Point {
+	int x;
+	int y;
+}
+
+class Circle {
+	Point c = new Point();	// 원점
+	int r;	// 반지름
+}
+```
+
+#### 3. 클래스간의 관계결정하기 - 상속 vs 포함
+- 가능한 한 많은 관계를 맺어주어 재사용성을 높인다.
+
+> 상속관계 - '~은 ~이다.(is-a)'
+> 포함관계 - '~은 ~을 가지고 있다. (has-a)'
+
+<br>
+
+```
+class Point {
+	int x;
+	int y;
+}
+
+class Circle {
+	Point c = new Point();
+	int r;
+}
+```
+
+```
+class Point {
+	int x;
+	int y;
+}
+
+class Circle extends Point {
+	int r;
+}
+```
+
+#### 4. 클래스간의 관계결정하기 - 예제설명
+- 원은 도형이다. (상속 is-a)
+- 원은 점을가지고 있다. (포함 has-a)
+
+<br>
+
+```
+class Shape {
+	String color = "blue";
+	void draw() {
+		// 도형 그리기 
+	}
+}
+
+class Point {
+	int x;
+	int y;
+	
+	Point() {
+		this(0, 0);
+	}
+	
+	Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
+
+class Circle extends Shape {
+	Point center;
+	int r;
+	
+	Circle() {
+		this(new Point(0, 0), 100);
+	}
+	
+	Circle(Point center, int r) {
+		this.center = center;
+		this.r = r;
+	}
+}
+
+class Triangle extends Shape {
+	Point[] p;
+	
+	Triangle(Point[] p) {
+		this.p = p;
+	}
+	
+	Triangle(Point p1, Point p2, Point p3) {
+		p = new Point[]{p1, p2, p3};
+	}
+}
+```
+
+```
+Circle c1 = new Circle();
+Circle c2 = new Circle(new Point(150, 150), 50);
+
+Point[] p = { new Point(100, 100), new Point(140, 50), new Point(200, 100)};
+
+Triangle t1 = new Triangle(p);
+```
+
+#### 5. 단일 상속
+
+- 자바는 단일 상속만을 허용한다.
+
+<br>
+
+```
+class TVCR extends TV, VCR {	// 이와 같은 표현은 허용하지 않는다.
+	// ...
+}
+```
+
+<br>
+
+- 비중이 높은 클래스 하나만 상속관계로, 나머지는 포함관계로 한다.
+
+<br>
+
+- Tv class
+
+```
+class Tv {
+	boolean power;	// 전원상태 (on/off)
+	int channel;	// 채널
+	
+	void power() { power = !power; }
+	void channelUp() { ++channel; }
+	void channelDown() { --channel; }	
+}
+
+```
+
+<br>
+
+- VCR class
+
+```
+class VCR {
+	boolean power;
+	int counter = 0;
+	void power() { power = !power; }
+	void play() { //... }
+	void stop() { //... }
+	void rew() { //... }
+	void ff() { //... }
+}
+```
+
+<br>
+
+- TVCR class
+
+```
+class TVCR extends Tv{
+	VCR vcr = new VCR();
+	
+	void play() {
+		vcr.play();
+	}
+	
+	void stop() {
+		vcr.stop();
+	}
+	
+	void rew() {
+		vcr.rew();
+	}
+	
+	void ff() {
+		vcr.ff();
+	}
+}
+```
+
+<br>
+
+#### 6. Object 클래스 - 모든 클래스의 최고조상
+- 조상이 없는 클래스는 자동적으로 Object클래스를 상속받게 된다.
+- 상속계층도의 최상위에는 Object클래스가 위치한다.
+- 모든 클래스는 Object클래스에 정의된 11개의 메서드를 상속받는다.
+
+> toString(), equals(Object obj), hashCode(), ...
+
+```
+class Tv { // extends Object
+	// ...
+}
+
+class CaptionTv extends Tv {
+	// ...
+}
+```
+
+### 8. 오버라이딩
+
+- 조상클래스로부터 상속받은 메서드의 내용을 상속받는 클래스에 맞게 변경하는 것
+
+```
+class Animal {
+	int name;
+	
+	void growl() {
+		System.out.println("으르르릉");
+	}
+}
+
+class Cat {
+	void growl() {
+		System.out.println("미애옹");
+	}
+}
+```
+
+#### 1. 오버라이딩의 조건
+
+1. 선언부가 같아야 한다. (이름, 매개변수, 리턴타입)
+2. 접근제어자를 좁은 범위로 변경할 수 없다.
+	- 조상의 메서드가 protected라면, 범위가 같거나 넓은 protected나 public으로만 변경 가능하다.
+3. 조상클래스의 메서드보다 많은 수의 예외를 선언할 수 없다.	
+
+#### 2. 오버로딩 vs. 오버라이딩
+
+- 오버로딩 - 기존에 없는 새로운 메서드를 만드는 것
+- 오버라이딩 - 상속받은 메서드 내용을 변경하는 것으로
+
+```
+class Parent {
+	void parentMethod() {}
+}
+
+class Child extends Parent {
+	void parentMethod() {}		// 오버라이딩
+	void parentMethod(int i) {} // 오버로딩
+	
+	void childMethod() {}
+	void childMethod(int i) {}	// 오버로딩
+	void childMethod() {}		// 에러! 클래스명 중복
+}
+```
+
+#### 3. super - 참조변수
+
+> this - 인스턴스 자신을 가르키는 참조변수. 인스턴스의 주소가 저장되어 있음.
+>		 모든 인스턴스 메서드에 지역변수로 숨겨진 채로 존재
+> super - this와 같음. 조상의 멤버와 자신의 멤버를 구별하는 데 사용.
+
+```
+class Parent {
+	int x = 10;
+}
+
+class Child extends Parent {
+	int x = 20;
+
+	// Child 클래스의 멤버변수 x값
+	// Child 클래스의 x값이 없으면 상속받은 클래스의 x값을 가져온다.
+	System.out.println("x: " + x);
+	System.out.println("this.x: " + this.x);
+	
+	// 상속받는 조상 클래스 멤버변수 x값
+	System.out.println("super.x: " + super.x);
+}
+```
+
+#### 4. super() - 조상의 생성자
+
+- 자손클래스의 인스턴스를 생성하면, 자손의 멤버와 조상의 멤버가 합쳐진 하나의 인스턴스가 생성된다.
+- 조상의 멤버들도 초기화되어야 하기 때문에 자손의 생성자의 첫 문장에서 조상의 생성자를 호출해야 한다.
+
+> Object 클래스를 제외한 모든 클래스의 생성자 첫 줄에는 생성자(같은 클래스의 다른 생성자 또는 조상의 생성자)를 호출해야 한다.
+> 그렇지 않으면 컴파일러가 자동적으로 'super();'를 생성자의 첫 줄에 삽입한다.
+
+<br>
+
+```
+class Point { // extends Object
+	int x;
+	int y;
+	
+	Point() {
+		this(0, 0);
+	}
+	
+	Point(int x, int y) {
+		// super(); Object();
+		this.x = x;
+		this.y = y;
+	}
+}
+```
+
+<br>
+
