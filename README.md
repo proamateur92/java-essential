@@ -6,6 +6,8 @@
 6. 객체지향언어 (클래스와 객체)
 7. 상속
 8. 오버라이딩
+10. 제어자
+11. 다형성
 
 ### 1. 자바
 
@@ -988,4 +990,189 @@ class Point { // extends Object
 ```
 
 <br>
+
+### 10. 제어자
+
+- 클래스, 변수, 메서드의 선언부에 사용되어 부가적인 의미를 부여한다.
+- 제어자는 크게 접근 제어자와 그 외의 제어자로 나뉜다.
+- 하나의 대상에 여러 개의 제어자를 조합해서 사용할 수 있지만 접근제어자는 단 하나만 사용 가능하다.
+
+> 접근 제어자 - public, protected, default, private
+> 그 외 - static, final, abstract, native, transient
+> 		, synchronized, volatile, strictfp
+
+#### 1. static - 클래스의, 공통적인
+
+> static이 사용될 수 있는 곳 - 멤버 변수, 메서드, 초기화 블럭
+
+- static 멤버 변수
+	- 모든 인스턴스에 공통적으로 사용되는 클래스 변수가 된다.
+	- 클래스 변수는 인스턴스를 생성하지 않고 사용 가능하다.
+	- 클래스가 메모리에 로드될 때 생성한다.
+
+- static 메서드
+	- 인스턴스를 생성하지 않고도 호출 가능한 static 메서드가 된다.
+	- static 메서드 내에서는 인스턴스 멤버들을 직접 사용할 수 없다.
+
+<br>
+	
+```
+class staticTest {
+	static int width = 200;
+	static int height = 120;
+	
+	static {	// 클래스 초기화 블럭
+		// static 변수의 복잡한 초기화 수행
+	}
+	
+	static int max(int a, int b) {
+		return a > b ? a : b;
+	}
+}
+```
+
+<br>
+	
+#### 2. final - 마지막의, 변경될 수 없는
+
+> final이 사용될 수 있는 곳 - 클래스, 메서드, 멤버변수, 지역변수
+
+- final 클래스 
+	- 변경될 수 없는 클래스, 확장할 수 없는 클래스가 된다.
+	- final로 지정된 클래스는 다른 클래스의 조상이 될 수 없다.
+
+- final 메서드
+	- 변경될 수 없는 메서드, final로 지정된 메서드는 오버라이딩을 통해 재정의될 수 없다.
+
+- final 멤버변수, 지역변수 
+	- 변수 앞에 final이 붙으면 값을 변경할 수 없는 상수가 된다.
+
+<br>
+
+```
+final class FinalTest {
+	final int MAX_SIZE = 10;
+	
+	final void getMaxSize() {
+		final int LV = MAX_SIZE;
+		return MAX_SIZE;
+	}
+}
+
+class Child extends FinalTest {	// 에러. final 클래스는 조상이 될 수 없다.
+	void getMaxSize() {}	// 에러. 오버리이딩 불가
+}
+```
+
+<br>
+
+** 대표적인 final 클래스로는 String, Math가 있다.
+
+<br>
+
+#### 3. 생성자를 이용한 finla 멤버변수 초기화
+
+- final이 붙은 변수는 상수이므로 보통은 선언과 초기화를 동시에 하지만,
+인스턴스마다 고정값을 갖는 인스턴스 변수의 경우 생성자에서 초기화된다.
+(카드의 무늬와 숫자가 한번 결정되면 바뀌지 않아야 하는 경우)
+
+<br>
+
+- Card class
+
+```
+class Card {
+	final int NUMBER;
+	final String KIND;
+	static int width = 100;
+	static int height = 250;
+	
+	Card() {
+		this(5, "Diamond");
+	}
+	
+	Card(int num, String kind) {
+		NUMBER = num;
+		KIND = kind;
+	}
+	
+	public String toString() {
+		return "" + KIND + " " + NUMBER;
+	}
+}
+```
+
+<br>
+
+- Main class 
+
+```
+public static void main(String[] args) {
+	Card c = new Card(3, "HEART");
+	// c.NUMBER = 10; 에러 발생 (상수이므로)
+	System.out.println(c.KIND);
+	System.out.println(c.NUMBER);
+}
+```
+
+<br>
+
+#### 4. abstract - 추상의, 미완성의
+
+> abstact가 사용될 수 있는 곳 - 클래스, 메서드
+
+- abstract 클래스 
+	- 클래스 내에 추상메서드가 선언되어 있음을 의미한다.
+
+- abstract 메서드
+	- 선언부만 작성하고 구현부는 작성하지 않은 추상메서드임을 알린다.
+
+<br>
+
+```
+abstract class AbstractTest {	// 추상 클래스
+	abstract void move();		// 추상 메서드
+}
+```
+
+<br>
+
+#### 5. 접근 제어자
+
+- 멤버 또는 클래스에 사용되어 외부로부터 접근을 제어한다.
+
+> private - 같은 클래스 내에서만 접근 가능하다.
+> default - 같은 패키지 내에서만 접근 가능하다.
+> protected - 같은 패키지 내, 그리고 다른 패키지의 자손클래스에서 접근 가능하다.
+> public - 접근 제한이 없다.
+
+#### 6. 접근 제어자를 이용한 캡슐화
+
+> 접근 제어자를 사용하는 이유
+> 외부로부터 데이터를 보호하기 위해
+
+#### 7. 제어자의 조합
+
+> 클래스 - public, default, final, abstract
+>
+> 메서드 - 모든 접근 제어자, final, abstract, static
+>
+> 멤버변수 - 모든 접근 제어자, final, static
+>
+> 지역변수 - final
+
+1. 메서드에 static과 abstract를 함께 사용할 수 없다.
+	- static 메서드는 몸통(구현부)이 있는 메서드에만 사용할 수 있기 때문이다.
+	
+2.  클래스에 abstract와 final을 동시에 사용할 수 없다.
+	- 클래스에 사용되는 final은 클래스를 확장할 수 없음을 의미한다.
+	- abstarct는 상속을 통해 완성되어야 하는 의미로 서로 모순된다.
+
+3. abstract메서드의 접근제어자가 private일 수 없다.
+	- abstract메서드는 자손클래스에서 구현해주어야 하는데 접근 제어자가 private이면,
+	- 자손클래스에서 접근할 수 없다.
+
+4. 메서드 private와 final을 같이 사용할 수 없다.
+	- 접근제어자가 private인 메서드는 오버라이딩될 수 없다. 
+	- 접근제어자 둘 중 하나만 사용해도 의미가 충분하다.
 
