@@ -15,7 +15,7 @@ class Bird extends Animal {
 	}
 }
 
-public class EX11_1 {
+public class Ex11_1 {
 	public static void main(String[] args) {
 		Animal a = null;
 		Bird b1 = new Bird();
@@ -27,6 +27,19 @@ public class EX11_1 {
 		// 따라서, 조상클래스의 인스턴스에서 조상타입의 참조변수로 값을 할당할 때 형변환을 명시해주어야 한다.
 		// b2 = a; // 에러 발생!
 		b2.fly();
+		
+		// instanceof 연산자 테스트
+		if(b1 instanceof Bird) {
+			System.out.println("Bird객체의 인스턴스입니다.");
+		}
+
+		if(b1 instanceof Animal) {
+			System.out.println("Animal객체의 인스턴스입니다.");
+		}
+		
+		if(b1 instanceof Bird) {
+			System.out.println("Object객체의 인스턴스입니다.");
+		}
 	}
 
 }
