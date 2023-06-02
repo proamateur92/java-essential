@@ -1265,3 +1265,75 @@ f = (FireEngine)a;
 ```
 
 <br>
+
+#### 2. intanceof 연산자
+
+- 참조변수가 참조하는 인스턴스의 실제 타입을 체크하는데 사용.
+- 이항연산자이며 피연산자는 참조형 변수와 타입. 연산결과는 true, false.
+- instanceof의 연산결과가 true이면, 해당 타입으로 형 변환이 가능하다.
+
+```
+FireEngine fe = new FireEngine();
+
+// 참조변수 fe는 FireEngine의 인스턴스이다.
+// 동시에 Car, Object의 인스턴스이다.
+
+```
+
+<br>
+
+#### 3. 참조변수와 인스턴스의 연결
+
+> 멤버변수가 중복정의된 경우, 
+> 참조변수의 타입에 따라 연결되는 멤버변수가 달라진다. (참조변수타입에 영향 받음)
+>
+> 메서드가 중복정의된 경우, 
+> 참조변수의 타입에 관계없이 항상 실제 인스턴스 타입에 정의된 메서드가 호출된다. (참조변수타입에 영향 받지 않음)
+
+> 즉, 멤버변수가 중복되면 참조 타입 객체를 따르고,
+> 메서드가 중복되면 인스턴스 타입 객체를 따른다.
+
+<br>
+
+#### 4. 매개변수의 다형성
+
+- 참조형 매개변수는 메서드 호출시, 자신과 같은 타입 또는 자손타입의 인스턴스를 넘겨줄 수 있다.
+
+#### 5. 여러 타입의 객체를 하나의 배열로 다루기
+
+- 조상타입의 배열에 자손들의 객체를 담을 수 있다.
+
+<br>
+
+```
+Product p1 = new Tv();
+Product p2 = new Computer();
+Product p3 = new Audio();
+
+Product p[] = new Product[3];
+p[0]= new Tv();
+p[1]= new Computer();
+p[2]= new Audio();
+```
+
+```
+class Buyer {
+	int money = 1000;
+	int bonusPoint = 0;
+	
+	Product[] cart = new Product[10];
+	
+	int i = 0;
+	
+	void buy(Product p) {
+		if(money < p.price) {
+			System.out.println("잔액이 부족합니다.");
+			return;
+		}
+		
+		this.moeny -= p.price;
+		this.bonusPoint -= p.bonusPoint;
+		cart[i++] = p;
+	}
+}
+```
