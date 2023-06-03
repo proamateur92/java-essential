@@ -6,8 +6,10 @@
 6. 객체지향언어 (클래스와 객체)
 7. 상속
 8. 오버라이딩
-10. 제어자
+10.제어자
 11. 다형성
+12. 추상클래스
+13. 인터페이스
 
 ### 1. 자바
 
@@ -1335,5 +1337,342 @@ class Buyer {
 		this.bonusPoint -= p.bonusPoint;
 		cart[i++] = p;
 	}
+}
+```
+
+<br>
+
+### 12. 추상클래스
+
+- 클래스가 설계도라면 추상클래스는 미완성 설계도라고 할 수 있다.
+- 추상메서드(미완성 메서드)를 포함하고 있는 클래스.
+
+** 추상메서드: 선언부만 존재하고 구현부(몸통, body)는 없는 메서드
+
+<br>
+
+```
+abstract class Player {
+	int currentPos;				// 현재 play되고 있는 위치를 저장하기 위한 변수
+	
+	Player() {					// 추상클래스도 생성자가 있어야 한다.
+		this.currentPos = 0;
+	}
+	
+	abstract void play(int pos);	// 추상메서드
+	abstract void stop();			// 추상메서드
+	
+	void play() {
+		play(currentPos);			// 추상메서드를 사용할 수 있다.
+	}
+}
+```
+
+<br>
+
+- 일반 메서드가 추상 메서드를 호출할 수 있다.
+- 완성된 설계도가 아니므로 인스턴스를 생성할 수 없다.
+- 다른 클래스를 작성하는 데 도움을 줄 목적으로 작성한다.
+
+<br>
+
+#### 1. 추상메서드
+
+- 선언부만 있고 구현부가 없는 메서드
+
+```
+// 주석을 통해 어떤 기능을 수행할 목적으로 작성하였는지 설명한다.
+// abstract 리턴타입 메서드이름();
+
+abstract void play(int pos);
+```
+
+<br>
+
+- 꼭 필요하지만 자손마다 다르게 구현될 것으로 예상되는 경우 사용한다.
+- 추상클래스를 상속받는 자손클래스에서 추상메서드의 구현부를 완성해야 한다.
+
+<br>
+
+#### 2. 추상클래스의 작성
+
+> 여러 클래스에 공통적으로 사용될 수 있는 추상클래스를 바로 작성하거나 
+> 기존클래스의 공통 부분을 뽑아서 추상클래스를 만든다.
+
+<br>
+
+### 13. 인터페이스
+
+- 일종의 추상클래스. 추상클래스보다 추상화 정도가 높다.
+- 실제 구현된 것이 없는 기본 설계도.
+- 추상메서드와 상수만을 멤버로 가질 수 있다.
+- 인스턴스를 생성할 수 없고, 클래스 작성에 도움을 준다.
+- 미리 정해진 규칙에 맞게 구현하도록 표준을 제시하는 데 사용된다.
+
+<br>
+
+#### 1. 인터페이스의 작성
+
+```
+/*
+interface 인터페이스 이름 {
+	public static final 타입 상수명 = 값;
+	public abstract 메서드명(매개변수);
+}
+*/
+```
+
+<br>
+
+- 구성요소(멤버)는 추상메서드와 상수만 가능하다.
+
+- 모든 멤버변수는 public static final 이어야 하며, 이를 생략할 수 있다.
+- 모든 메서드는 public abstract 이어야 하며, 이를 생략할 수 있다.
+
+<br>
+
+```
+interface PlayingCard {
+	public static final int SPADE = 4;
+	final int DIAMOND = 3;	// public static final int DIAMOND = 3;
+	static int HEART = 2;	// public static final int HEART = 2;
+	int CLOVER = 1;			// public static final int CLOVER = 1;
+
+	public abstract String getCardNumber();
+	String getCardNumber();	// public abstract String getCardNumber();
+}
+```
+
+<br>
+
+#### 2. 인터페이스의 상속
+
+- 인터페이스도 클래스처럼 상속이 가능하다. (다중상속 허용)
+- 인터페이스는 Object 클래스와 같은 최고 조상이 없다.
+
+```
+interface Movable {
+	void move(int x, int y);
+}
+
+interface Attackable {
+	void attack(Unit u);
+}
+
+interface Fightable extends Movable, Attackable {}
+```
+
+<br>
+
+#### 3. 인터페이스의 구현
+
+- 인터페이스를 구현하는 것은 클래스를 상속받는 것과 같다.
+
+<br>
+
+```
+// class 클래스이름 implements 인터페이스명 {
+	// 인터페이스에 정의된 추상 메서드를 구현
+}
+```
+
+<br>
+
+- 인터페이스에 정의된 추상메서드를 완성해야 한다.
+
+<br>
+
+```
+class Fighter implements Fightable {
+	void move(int x, int y) {};
+	void attack(Unit u) {}
+}
+
+
+```
+
+<br>
+
+- 상속과 구현이 동시에 가능하다.
+
+<br>
+
+```
+class Fighter extends Unit implements Fightable {
+	public void move(int x, int y) {};
+	public void attack(Unit u) {};
+}
+```
+
+<br>
+
+#### 4. 인터페이스를 이용한 다형성
+
+- 인터페이스 타입의 변수로 인터페이스를 구현한 클래스의 인스턴스를 참조할 수 있다.
+
+<br>
+
+```
+class Fighter extends Unit implements Fightable {
+	public void move(int x, int y) {};
+	public void attack(Unit u) {};
+}
+
+Fighter f1 = new Fighter();
+Fightable f2 = new Fightable();
+```
+
+<br>
+
+- 인터페이스를 메서드의 매개변수 타입으로 지정할 수 있다.
+
+<br>
+
+```
+void attack(Fightable f) {
+	// ...
+}
+```
+
+<br>
+
+- 인터페이스를 메서드의 리턴타입으로 지정할 수 있다.
+
+<br>
+
+```
+Fightable method() {
+	// ...
+	return new Fighter();
+}
+```
+
+<br>
+
+#### 5. 인터페이스의 장점
+
+1. 개발시간을 단축시킬 수 있다.
+2. 표준화가 가능하다.
+3. 서로 관계없는 클래스들에게 관계를 맺어 줄 수 있다.
+4. 독립적인 프로그래밍이 가능하다.
+
+<br>
+
+#### 6. 인터페이스의 이해
+
+- 두 대상(객체)를 이어주는 중간 역할을 한다.
+- 선언(설계)와 구현을 분리시큰ㄴ 것을 가능하게 한다.
+
+<br>
+
+- 인터페이스를 이해하려면 두 가지를 기억하자.
+	- 클래스를 사용하는 쪽(User)과 클래스를 제공하는 쪽(Provider)이 있다.
+	- 메서드를 사용(호출)하는 쪽(User)에서는 사용하려는 메서드(Provider)의 선언부만 알면 된다.
+
+<br>
+
+- 직접적인 관계의 두 클래스(A-B)
+
+<br>
+
+```
+class A {
+	public void method(B b) {
+		b.methodB();
+	}	
+}
+
+class B {
+	public void methodB() {
+		System.out.println("methodB()");
+	}
+}
+
+class InterfaceTest {
+	pubic static void main(String[] args) {
+		A a = new A();
+		a.method(new B());
+	}
+}
+```
+
+<br>
+
+- 간접적인 관계의 두 클래스(A-I-B)
+
+<br>
+
+```
+class A {
+	public void methodA(I i) {
+		i.methodB();
+	}
+}
+
+interface I { void methodB(); }
+
+classB implements I {
+	public void methodB() {
+		System.out.println("methodB());
+	}
+}
+
+class C implements I {
+	public void methodB() {
+		System.out.println("methodB() in C);
+	}
+}
+```
+
+<br>
+
+#### 7. 인터페이스의 이해 - 예제
+
+- 인터페이스 미적용 코드
+
+<br>
+
+```
+class Time {
+	int hour;
+	int minute;
+	int second;
+	
+	public int getHour() { return hour; }
+	public void setHour(int hour) {
+		// 예외처리
+		this.hour = hour;
+	}
+	
+	public int getMinute() { return minute; }
+	public void setMinute(int minute) {
+		// 예외처리
+		this.minute = minute;
+	}
+	
+	public int getSecond() { return second; }
+	public void setSecond(int secound) {
+		// 예외처리
+		this.second = secound;
+	}
+}
+```
+
+<br>
+
+- 인터페이스 적용 코드
+
+<br>
+
+```
+public interface TimeIntF {
+	public int getHour();
+	public void setHour(int hour);
+
+	public int getMinute();
+	public void setMinute(int minute);
+
+	public int getSecond();
+	public void setSecond(int second);	
 }
 ```
