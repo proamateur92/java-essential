@@ -10,6 +10,7 @@
 11. 다형성
 12. 추상클래스
 13. 인터페이스
+17. 컬렉션 프레임워크
 
 ### 1. 자바
 
@@ -1676,3 +1677,133 @@ public interface TimeIntF {
 	public void setSecond(int second);	
 }
 ```
+
+<br>
+
+#### 8. 디폴트 메서드 - JDK1.8
+
+> 인터페이스에 새로운 메서드(추상 메서드)를 추가하면, 
+이 인터페이스를 구현한 기존의 모든 클래스가 이 메서드를 구현해야 한다.
+
+> 디폴트 메서드는 추상 메서드의 기본 구현을 제공한다. 그래서 구현부{}를 가지며 항상 public이다. (생략 가능)
+
+<br>
+
+```
+// 디폴트 메서드 미적용 코드
+interface MyInterface {
+	void method();
+	void newMethod();	// 추상 메서드
+}
+
+// 디폴트 메서드 적용 코드
+interface MyIntergace {
+	void method();
+	default void newMethod();
+}
+```
+
+<br>
+
+1. 여러 인터페이스의 디폴트 메서드 간의 충돌
+	- 인터페이스를 구현한 클래스에서 디폴트 메서드를 오버라이딩해야 한다.
+2. 디폴트 메서드와 조상 클래스의 메서드 간의 충돌
+	- 조상 클래스의 메서드가 상속되고, 디폴트 메서드는 무시된다.
+
+<br>
+
+### 17. 컬렉션 프레임워크
+
+- 컬렉션: 여러 객체(데이터)를 모아 놓은 것을 의미
+- 프레임워크: 표준화, 정형화된 체계적인 프로그래밍 방식
+- 컬렉션 프레임워크
+	- 컬렉션(여러 객체)를 다루기 위한 표준화된 프로그래밍 방식
+	- 컬렉션을 쉽고 편리하게 다룰 수 있는 다양한 클래스 제공
+	- java.util 패키지에 포함
+- 컬렉션 클래스: 다수의 데이터를 저장할 수 있는 클래스 (ex, Vector, ArrayList, HashSet)
+
+#### 1. 컬렉션 프레임워크의 핵심 인터페이스
+
+List
+Set
+Map
+
+> List
+> 순서를 유지하는 데이터의 집합. 중복을 허용한다. 
+> ex) 대기자 명단
+> 구현 클래스: ArrayList, LinkedList, Stack, Vector 등
+
+<br>
+
+> Set
+> 순서를 유지하지 않는 데이터 집합. 데이터 중복을 허용하지 않는다.
+> ex) 양의 정수집합, 소수의 집합
+> 구현 클래스: HashSet, TreeSet 등
+
+<br>
+
+> Map
+> 키와 쌍으로 이루어진 데이터의 집합
+> 순서를 유지하지 않고, 값의 중복만 허용한다.
+> ex) 우편번호, 지역번호
+> 구현 클래스: HashMap, TreeMap, HashTable, Properties 등
+
+<br>
+
+#### 2. Collection 인터페이스의 메서드
+
+add, remove, isEmpty, contains, iterator, size
+
+<br>
+
+#### 3. List 인터페이스
+
+- ArrayList
+- LinkedList
+
+- add, get, indexOf, remove, set(지정된 위치에 객체 저장), sort, subList
+
+<br>
+
+#### 4. Set 인터페이스
+
+- HashSet
+- TreeSet
+
+* 집합과 관련된 메서드(Collection의 변화가 있으면 true, 없으면 false)
+	- boolean addAll. 합집합
+	- boolean containsAll. 부분집합
+	- boolean removeAll. 차집합
+	- boolean retainAll. 교집합
+
+<br>
+
+#### 5. Map 인터페이스
+
+- HashMap
+- TreeMap
+
+- put, get, remove, entrySet, keySet, values
+
+<br>
+
+#### 6. ArrayList
+
+> Vector: 옛날 버전. 동기화되어 있다.
+> ArrayList: Vector를 개선한 것으로 동기화되어 있지 않다.
+> 데이터 저장 공간으로 배열을 사용한다.
+
+<br>
+
+```
+// Vector 클래스
+public class Vector extends AbstractList
+	implements List, RandomAccess, Cloneable, java.io.Serializable
+{
+	...
+	protected Object[] elementData;	// 모든 종류의 객체를 담기 위한 배열
+	...
+}
+```
+
+<br>
