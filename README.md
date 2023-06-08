@@ -2,15 +2,15 @@
 
 ## Index
 
-1. 자바
-6. 객체지향언어 (클래스와 객체)
-7. 상속
-8. 오버라이딩
-10.제어자
-11. 다형성
-12. 추상클래스
-13. 인터페이스
-17. 컬렉션 프레임워크
+> 1. 자바
+> 6. 객체지향언어 (클래스와 객체)
+> 7. 상속
+> 8. 오버라이딩
+> 10.제어자
+> 11. 다형성
+> 12. 추상클래스
+> 13. 인터페이스
+> 17. 컬렉션 프레임워크
 
 ### 1. 자바
 
@@ -1805,5 +1805,43 @@ public class Vector extends AbstractList
 	...
 }
 ```
+
+<br>
+
+#### 8. LinkedList
+
+	1) 크기 변경 가능
+	2) 추가, 삭제 시간 단축
+	3) 다음 노드의 참조 변수 값, 데이터 값을 가지고 있다.
+	4) 데이터 삭제 - 한번의 참조 변경으로 가능하다.
+	5) 데이터 삽입 - 한번의 node 객체 생성. 두번의 참조 변수 수정으로 가능하다.
+	6) 접근성이 나쁘다.
+	7) 이중 연결리스트: 접근성이 향상되었다. 이전 요소에 접근할 수 있다.
+	8) 이중 원형 연결리스트: 처음과 끝 노드를 이어주는 방식.
+	
+<br>
+
+#### 9. 스택과 큐
+
+- 스택: LIFO구조. 마지막에 저장된 것을 가장 먼저 추출한다. (push, pop)
+
+<br>
+
+> boolean empty()
+> Object peek()
+> Object pop()
+> Object push(Object item)
+> int search (object o)
+
+<br>
+
+- 큐: FIFO구조. 제일 먼저 저장한 것을 가장 먼저 추출한다. (offer, poll)
+
+> boolean add(Object o)
+> Object remove()
+> Object element 
+> boolean offer(Object o)
+> Object poll()
+> Object peek()
 
 <br>
