@@ -11,6 +11,7 @@
 > 12. 추상클래스
 > 13. 인터페이스
 > 17. 컬렉션 프레임워크
+> 19. 쓰레드
 
 ### 1. 자바
 
@@ -1837,11 +1838,379 @@ public class Vector extends AbstractList
 
 - 큐: FIFO구조. 제일 먼저 저장한 것을 가장 먼저 추출한다. (offer, poll)
 
+에러 발생
+
 > boolean add(Object o)
 > Object remove()
 > Object element 
+
+함수 실행 실패 시 false 혹은 null을 반환
+
 > boolean offer(Object o)
 > Object poll()
 > Object peek()
+
+<br>
+
+#### 10. Iterator, ListIterator, Enumeration
+
+- 컬렉션에 저장된 데이터를 접근하는데 사용되는 인터페이스
+- 컬렉션에 저장된 요소를 읽어오는 방법을 표준화한 것
+- Enumeration는 Iterator의 구버전
+- ListIterator는 Iterator의 접근성을 향상시킨 것 (단방향 -> 양방향)
+- 주요 메서드 
+	- boolean hasNext()
+	- Object next();
+
+<br>
+
+- Map에는 iterator()가 없다.
+- 메서드를 사용한다. 
+	- keySet() 
+	- entrySet()
+	- values()
+
+<br>
+
+```
+Map map = new HashMap();
+
+Iterator it = map.entrySet().iterator();
+```
+
+<br>
+
+### 19. 쓰레드
+
+#### 1. 쓰레드란? 
+
+- 프로세스
+	- 실행 중인 프로그램, 자원과 쓰레드로 구성
+	
+- 쓰레드
+	- 프로세스 내에서 실제 작업을 수행.
+	- 프로세스는 모두 최소 하나의 쓰레드를 가지고 있다.
+	
+프로세스 : 쓰레드 = 공장 : 일꾼
+
+- 싱글 쓰레드 프로세스: 자원 + 쓰레드
+- 멀티 쓰레드 프로세스: 자원 + n개의 쓰레드
+
+PID: 프로세스ID
+
+- 하나의 새로운 프로세스를 생성하는 것보다 하나의 새로운 쓰레드를 추가하는 것이 더 효율적이다.
+
+#### 2. 멀티쓰레드의 장단점
+
+장점
+	- 시스템 자원을 보다 효율적으로 사용할 수 있다.
+	- 사용자에 대한 응답성이 향상된다.
+	- 작업이 분리되어 코드가 간결해진다.
+	
+단점 
+	- 동기화에 주의해야 한다.
+	- 교착상태가 발생하지 않도록 주의해야 한다.
+	- 각 쓰레드가 효율적으로 균등히 실행될 수 있도록 해야 한다.
+
+<br>
+
+####. 3. 쓰레드의 구현과 실행
+
+- 1. Thread 클래스를 상속
+
+```
+class myThread extends Thread {
+	public void run() {	// Thread run 오버라이딩
+		// 작업 내용
+	}
+}
+
+// ...
+
+MyThread t1 = new MyThread();
+t1.run();
+```
+
+<br>
+
+- 2. Runnable 인터페이스를 구현
+
+```
+class MyThread2 implements Runnable {
+	public void run() {	// Runnable 인터페이스의 추상메서드 run() 구현
+		// 작업 내용
+	}
+}
+
+// ...
+
+Runnable r = new MyThread2();
+Thread t2 = new Thread(r);
+
+t2.start();
+```
+
+<br>
+
+- 메인메서드 호출
+
+```
+public static void main(String[] args) {
+	ThreadTest1 t1 = new ThreadTest1();
+	
+	Runnable r = new ThreadTest2();
+	Thread t2 = new Thread(r);
+	
+	t1.start();
+	t2.start();
+}
+```
+
+<br>
+
+- 쓰레드 구현 클래스
+
+```
+class ThreadTest1 extends Thread {
+	public void run() {
+		System.out.println("class called");
+		
+		for(int i = 0; i < 500; i++) {
+//			System.out.println(getName());	// this.getName()
+			System.out.print(0);	// this.getName()
+		}
+	}
+}
+
+class ThreadTest2 implements Runnable {
+
+	@Override
+	public void run() {
+		System.out.println("interface called");
+		
+		for(int i = 0; i < 500; i++) {
+			// Thread.currentHead 현재 실행중인 Thread를 반환한다.
+//			System.out.println(Thread.currentThread().getName());
+			System.out.print(1);
+		}
+	}
+	
+}
+```
+
+- 쓰레드가 엉켜서 작업 하는 것을 확인할 수 있다.
+
+#### 4. 쓰레드의 실행 - start()
+
+- 쓰레드를 생성한 후에 start()를 호출해야 쓰레드 작업이 시작된다.
+
+```
+ThreadTest1 t1 = new ThreadTest1();
+ThreadTest1 t2 = new ThreadTest1();
+
+t1.start(); // 쓰레드 t1을 실행한다.
+t2.start(); // 쓰레드 t2를 실행한다.
+```
+
+<br>
+
+어떤 쓰레드가 먼저 실행될지 알 수 없다. (OS스케줄러가 실행순서를 결정)
+ - start()는 시작 상태가 되는 것일 뿐 바로 실행되는 것이 아니기 때문이다.
+
+<br>
+
+#### 5. start()와 run()
+
+```
+class MyThread extends Thread {
+	public void run() { //... }
+}
+
+public class ThreadTest {
+	public static void main(String[] args) {
+		ThreadTest1 t1 = new ThreadTest1();
+		t1.start();
+	}
+}
+```
+
+<br>
+
+```
+1. CallStack			2. CallStack			3.Callstack				4.CallStack
+
+start()				start 새 쓰레드생성		start() run 호출 후 종료		
+main()				main()				main()		run()			main()		run()
+```
+
+<br>
+
+#### 5. main 쓰레드
+
+- main 메서드의 코드를 수행하는 쓰레드
+- 쓰레드에는 사용자 쓰레드와 데몬 쓰레드 두 종류가 있다.
+	- main thread - 사용자 쓰레드
+	- 보조 thread - 데몬 쓰레드
+- 실행 중인 사용자 쓰레드가 하나도 없을 때 프로그램은 종료된다.
+	- 멀티쓰레드의 경우 새 쓰레드 작업이 시작되므로 main 쓰레드가 종료되어도 프로그램은 종료되지 않는다.
+
+<br>
+
+- main 쓰레드는 t1, t2가 종료될 때까지 대기한다.
+- join 메서드를 지우면 main메서드는 바로 종료되지만 타 쓰레드가 실행 중이므로 프로그램은 종료되지 않는다.
+- 쓰레드의 join메서드는 호출한 쓰레드가 종료될 때까지 대기하게 만든다.
+
+```
+public class ThreadTest {
+	static long startTime = 0;
+	
+	public static void main(String[] args) {
+		ThreadEX5_1 t1 = new ThreadEX5_1();
+		ThreadEX5_2 t2 = new ThreadEX5_2();
+		
+		t1.start();
+		t2.start();
+
+		startTime = System.currentTimeMillis();
+		
+		try {
+			t1.join();	// main 쓰레드가 t1의 작업이 끝날 때까지 기다린다.
+			t2.join();	// main 쓰레드가 t2의 작업이 끝날 때까지 기다린다.
+		} catch(InterruptedException e) {}
+		
+		System.out.println("소요시간: " + (System.currentTimeMillis() - startTime));
+	}
+
+}
+
+class ThreadEX5_1 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("-");
+		}
+	}
+}
+
+class ThreadEX5_2 extends Thread {
+	public void run() {
+		for(int i = 0; i < 300; i++) {
+			System.out.print("|");
+		}
+	}
+}
+```
+
+<br>
+
+#### 6. 싱글쓰레드와 멀티쓰레드
+
+- 두개의 작업이 있다고 가정했을 때,
+- 싱글 쓰레드의 경우 두개의 작업이 있을 때 절대로 겹치지 않는다.
+- 멀티 쓰레드의 경우 두개의 각 쓰레드의 작업은 뒤섞여 실행된다.
+- 시작이나 호출되는 순서는 OS스케줄러의 판단이므로 (그때의 자원과 상태 등을 고려) 사용자가 개입할 수 없다.
+- context switching은 멀티쓰레드일 때, 특정 쓰레드의 작업이 다른 쓰레드로 옮겨지는 것을 의미한다. 싱글쓰레드 보다 시간이 지연된다.
+- 멀티쓰레드가 싱글쓰레드에 비해 작업 시간이 더 걸림에도 불구하고 여러 작업을 할 수 있다는 장점을 가지고 있다.
+
+<br>
+
+#### 7. 쓰레드의 I/O 블락킹
+
+- blocking 부분이 존재할 때 싱글쓰레드는 사용자 입력을 기다리므로 아무런 작업을 할 수 없다.
+- 반면, 멀티쓰레드는 대기 시간에도 다른 작업이 진행된다.
+
+<br>
+
+- 싱글쓰레드 - I/O 블락킹에 의해 모든 작업이 진행되지 않는다.
+
+```
+public static void main(String[] args)  {
+	System.out.println("아무 값이나 입력하세요.");
+	
+	Scanner sc = new Scanner(System.in);
+	String input = sc.nextLine();
+	
+	System.out.println("입력하신 값은 " + input + "입니다.");
+	
+	for(int i = 10; i > 0; i--) {
+		System.out.println(i);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {}
+	}
+}
+```
+
+<br>
+
+- 멀티쓰레드 - I/O 블로킹에도 타 쓰레드가 작업한다.
+
+```
+// ThreadTest main()
+
+ThreadTest7 t1 = new ThreadTest7();
+t1.start();
+
+System.out.println("아무 값이나 입력하세요.");
+
+Scanner sc = new Scanner(System.in);
+String input = sc.nextLine();
+
+System.out.println("입력하신 값은 " + input + "입니다.");
+
+// ThreadTest7 class		
+public void run () {
+	for(int i = 10; i > 0; i--) {
+		System.out.println(i);
+		
+		try {
+			sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+#### 8. 쓰레드의 우선 순위
+
+- 작업의 중요도에 따라 쓰레드의 우선 순위를 지정하여 특정 쓰레드가 더 많이 작업할 수 있도록 할 수 있다.
+- OS 스케줄러는 모든 프로세스와 스레드를 고려하므로 우선 순위를 무조건적으로 반영하지는 않는다.
+
+```
+// void setPriority(int newPriority) 쓰레드의 우선 순위를 지정한 값으로 변경한다.
+// int getPriority() 쓰레드의 우선 순위를 반환한다.
+
+public static final int MAX_PRIORITY = 10 // 최대 우선 순위
+public static final int MIN_PRIORITY = 1  // 최소 우선 순위
+public static final int NORM_PRIORITY = 5 // 보통 우선 순위
+```
+
+#### 9. 쓰레드 그룹
+
+- 서로 관련된 쓰레드를 그룹으로 묶어서 다루기 위한 것
+- 모든 쓰레드는 반드시 하나의 쓰레드 그룹에 속해야 한다.
+- 쓰레드 그룹으로 지정하지 않고 생성한 쓰레드는 'main쓰레드 그룹'에 속한다.
+- 자신을 생성한 쓰레드(부모 쓰레드)의 그룹과 우선순위를 상속받는다.
+
+<br>
+
+```
+Thread(ThreadGroup group. String name)
+Thread(ThreadGroup group. Runnable target)
+Thread(ThreadGroup group. Runnable target, String name)
+Thread(ThreadGroup group. Runnable target, String name, long stackSize)
+```
+
+<br>
+
+```
+// 쓰레드 자신이 속한 쓰레드 그룹 반환
+ThreadGroup getThreadGroup()
+
+// 처리되지 않은 예외에 의해 쓰레드 그룹의 쓰레드 실행이 종료되면, JVM에 의해 이 메서드가 자동 호출된다.
+void uncaughtException(Thread t, Throwable e)
+```
 
 <br>
