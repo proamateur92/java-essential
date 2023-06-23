@@ -1903,11 +1903,13 @@ PID: 프로세스ID
 #### 2. 멀티쓰레드의 장단점
 
 장점
+	
 	- 시스템 자원을 보다 효율적으로 사용할 수 있다.
 	- 사용자에 대한 응답성이 향상된다.
 	- 작업이 분리되어 코드가 간결해진다.
 	
 단점 
+
 	- 동기화에 주의해야 한다.
 	- 교착상태가 발생하지 않도록 주의해야 한다.
 	- 각 쓰레드가 효율적으로 균등히 실행될 수 있도록 해야 한다.
@@ -2214,3 +2216,161 @@ void uncaughtException(Thread t, Throwable e)
 ```
 
 <br>
+
+#### 10. 데몬 쓰레드
+
+- 일반 쓰레드의 작업을 돕는 보조적인 역할을 수행
+- 일반 쓰레드가 모두 종료되면 자동적으로 종료된다.
+- 가비지 컬렉터(쓰지 않는 메모리 정리), 자동저장, 화면 자동갱신 등에 사용된다.
+- 무한루프와 조건문을 이용해서 실행 후 대기핟가ㅏ 특정 조건이 만족되면
+  작업을 수행하고 다시 대기한다.
+  
+<br>
+
+```
+// 일반 쓰레드가 종료되면 자동 종료되므로 무한루프로 구현
+public void run() {
+	while(true) {
+		try {
+			Thread.sleep(3 * 1000);	// 3초 마다
+		} catch(InterruptedException e) {}
+	
+		// autoSave값이 true면 autoSave() 메서드 호출
+		if(autoSave) {
+			autoSave();
+		}
+	}
+}
+```
+
+<br>
+
+- boolean isDaemon() - 쓰레드가 데몬 쓰레드인지 확인하는 메서드
+- void setDaemon(boolean on) - 쓰레드를 데몬 쓰레드 혹은 사용자 쓰레드로 변경.
+							 매개변수 on을 true로 지정하면 데몬 쓰레드가 된다.
+
+** setDaemon(boolean on)은 반드시 start()를 호출하기 전에 실행되어야 한다.
+   그렇지 않으면 IllegalThreadStateException이 발생한다.
+
+<br>
+
+```
+public class Ex19_10 implements Runnable {
+	static boolean autoSave = false;
+	
+	public static void main(String[] args) {
+		
+		Thread t1 = new Thread(new Ex19_10()); // Runnable r
+		
+		// 데몬 쓰레드가 아니라면 프로그램은 종료되지 않고 계속해서 3초마다 저장된다.
+		t1.setDaemon(true);
+		t1.start();
+		
+		for(int i = 1; i <= 10; i++) {
+			try {
+				Thread.sleep(1000);
+				System.out.println("main= " + i);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(i == 5) {
+				autoSave = true;
+			}
+		}
+		
+		System.out.println("프로그램이 종료됩니다.");
+	}
+
+	@Override
+	public void run() {
+		while(true) { // 무한루프
+			try {
+				Thread.sleep(3 * 1000);
+			} catch (InterruptedException e) {
+			}
+			
+			if(autoSave) autoSave();
+		}
+	}
+
+	void autoSave() {
+		System.out.println("파일을 저장했습니다.");
+	}
+}
+```
+
+<br>
+
+#### 12. 쓰레드의 상태
+
+- NEW				쓰레드가 생성되고 아직 start()가 호출되지 않은 상태
+- RUNNABLE			실행 중 또는 실행 가능한 상태
+- BLCOKED			동기화 블럭에 의해 일시정지된 상태(lock이 풀릴 때까지 기다리는 상태)
+- WATING			쓰레드의 작업이 종료되지 않았지만 실행 가능하지 않은 일시정지 상태 
+- TIMED_WAITING		WAITING과 같지만 일시정지시간이 지정된 경우를 의미
+- TERMINATED 		쓰레드의 작업이 종료된 상태
+
+쓰레드의 생성 NEW
+쓰레드의 실행대기 또는 실행 RUNNABLE: 줄서기
+할당된 작업 시간이 지나면 다시 줄을 선다.
+stop혹은 소멸되지 않는 한 다시 줄을 선다.
+
+만나면 대기(waiting, blocked)
+suspend()	일시정지	<->		resume()	재개
+sleep()		잠자기	<->		interrupt()	깨우기
+wait()		대기		<->		notify
+join()		기다리기			time-out	시간종료
+I/O block	입출력대기
+
+#### 13. 쓰레드의 실행제어
+
+- 쓰레드의 실행을 제어할 수 있는 메서드가 제공된다.
+
+** static은 thread 자기 자신에게 호출 가능
+
+- static void sleep(long millis)
+- void join()			
+- void inerrupt() 		sleep() or join()을 깨움
+- void stop 			쓰레드 즉시 종료
+- void suspend()		일시정지
+- void resume()			재개
+- static void yield()
+
+<br>
+
+#### 14. sleep()
+
+- static 함수이므로 자기 자신만 대상이 된다.
+- 현재 쓰레드를 지정된 시간동안 멈추게 한다.
+
+<br>
+
+```
+static void sleep(long millis)
+```
+
+<br>
+
+- 예외처리 해야한다.(InterruptedException이 발생하면 깨어남)
+
+<br>
+
+```
+try {
+	Thread.sleep(1 * 3000);
+} catch (InterruptedException e) {} // Exception의 자손이므로 필수 예외처리 필요
+```
+
+<br>
+
+#### 15. interrupt()
+
+- 대기상태(WAITING)인 쓰레드를 실행대기 상태(RUNNABLE)로 만든다.
+
+```
+void interrupt()		// 쓰레드의 interrupted를 false에서 true로 변경
+boolena isInterrupted()		// 쓰레드의 interrupted 상태를 반환
+static boolean interrupted()	// 현재 쓰레드의 interrupted 상태를 알려주고, false로 초기화
+```
