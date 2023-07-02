@@ -1,6 +1,6 @@
 # 자바의 정석 내용 정리
 
-## Index
+## Index (수정 예정 - 도서 참고)
 
 > 1. 자바
 > 6. 객체지향언어 (클래스와 객체)
@@ -12,6 +12,7 @@
 > 13. 인터페이스
 > 17. 컬렉션 프레임워크
 > 19. 쓰레드
+> 14. 람다식
 
 ### 1. 자바
 
@@ -2373,4 +2374,60 @@ try {
 void interrupt()		// 쓰레드의 interrupted를 false에서 true로 변경
 boolena isInterrupted()		// 쓰레드의 interrupted 상태를 반환
 static boolean interrupted()	// 현재 쓰레드의 interrupted 상태를 알려주고, false로 초기화
+```
+
+
+## 14. 람다식
+
+### 14-35 Optional<T>
+
+Optional
+T타입의 참조변수를 갖는다. 모든 종류의 객체 저장 가능한 Wrapper class. 
+간접적으로 null을 다룬다.
+
+1. null을 직접 다루는 것은 위험하다. (NullpointerException)
+2. null 체크. if문 필수. 코드가 지저분해진다.
+
+Optional 객체를 사용해서 null을 다룰 때에도 객체 주소값이 존재하므로
+에러가 발생하지 않는다.
+
+#### 14-36 Optional<T> 객체 생성하기 
+
+##### Optional<T> 객체를 생성하는 다양한 방법
+
+```
+String str = "abc";
+Optional<String> optVal = Optional.of(str);
+Optional<String> optVal = Optional.of("abc");
+Optional<String> optVal = Optional.of(null);			// NullpointerException 발생
+Optional<String> optVal = Optional.ofNullable(null);	// OK
+```
+
+##### null 대신 빈 Optional<T> 객체를 사용하자.
+
+```
+Optional<String> optVal = null;	// 널로 초기화. 바람직하지 않음.
+Optional<String> optVal = Optional.<String>empty();		// 빈 객체로 초기화. 할당되는 Optional의 제네릭은 생략 가능하다.
+```
+
+### 14-37 Optional<T> 객체의 값 가져오기
+
+##### Optional 객체의 값 가져오기 - get(), orElse(), orElseGet(), orElseThrow()
+
+```
+Optional<String> optVal = Optional.of("abc");
+String str1 = optVal.get();						// optVal에 저장된 값을 반환. null이면 예외 발생
+String str2 = optVal.orElse("");				// optVal에 저장된 값이 null일 때는, ""을 반환
+String str3 = optVal.orElseGet(String::new);	// 람다식 사용가능 () -> new String()
+String str4 = optVal.orElseThrow(NullpointerException::new);	// null이면 예외 발생
+```
+
+##### isPresnet() - Optional 객체의 값이 null이면 false, 아니면 true를 반환
+
+```
+if(Optional.ofNullable(str).isPresent()) {	// if(str != null)
+	System.out.println(str);
+	// Optional.ofNullable(str)
+	//	.isPresent(System.out::println);
+}
 ```
